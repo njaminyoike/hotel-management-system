@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nyeri County Location Selector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f6f7f9;
+      margin: 0;
+      padding: 0;
+      color: #111;
+    }
+
+    header, footer {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    footer {
+      border-top: 1px solid #e5e7eb;
+      border-bottom: none;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    select:disabled {
+      background: #f1f1f1;
+    }
+
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+    }
+
+    button.secondary {
+      background: white;
+      color: #111;
+      border: 1px solid #ccc;
+    }
+
+    .result {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumb span {
+      display: inline-block;
+      background: #ffffff;
+      padding: 0.25rem 0.5rem;
+      margin-right: 0.3rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Nyeri County Locator</h1>
+  <p>Select and save your location in Nyeri County, Kenya</p>
+</header>
+
+<main>
+  <div class="card">
+
+    <label>1. Sub-County</label>
+    <select id="subCounty">
+      <option value="">Select sub-county</option>
+    </select>
+
+    <label>2. Ward</label>
+    <select id="ward" disabled>
+      <option value="">Select ward</option>
+    </select>
+
+    <label>3. Town</label>
+    <select id="town" disabled>
+      <option value="">Select town</option>
+    </select>
+
+    <label>4. Estate</label>
+    <select id="estate" disabled>
+      <option value="">Select estate</option>
+    </select>
+
+    <div id="output" class="result" style="display:none"></div>
+
+    <div class="actions">
+      <button id="saveBtn">Save Location</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  Nyeri County Location Selector – Local storage enabled
+</footer>
+
+<script>
+/* ================= LOCATION DATA ================= */
+
+const nyeriLocations = {
+  "Nyeri Central": {
+    "Kamakwa/Mukaro": {
+      "Kamakwa": ["Kamakwa Estate", "Mukaro Estate"],
+      "Mukaro": ["Mukaro Town", "Giathugu Estate"]
+    }
+  },
+  "Othaya": {
+    "Mahiga": {
+      "Mahiga": ["Mahiga Town", "Gichiche Estate"]
+    }
+  },
+  "Tetu": {
+    "Dedan Kimathi": {
+      "Wamagana": ["Wamagana Town", "Muhoya Estate"]
+    }
+  },
+  "Mathira": {
+    "Ruguru": {
+      "Karatina": ["Karatina Town Centre", "Ragati Estate"]
+    }
+  },
+  "Kieni": {
+    "Mweiga": {
+      "Mweiga": ["Mweiga Town", "Kabiruini Estate"]
+    }
+  },
+  "Mukurwe-ini": {
+    "Mukurwe-ini Central": {
+      "Mukurwe-ini Town": ["Mukurwe-ini Centre", "Rutune Estate"]
+    }
+  }
+};
+
+/* ================= ELEMENTS ================= */
+
+const subCountyEl = document.getElementById("subCounty");
+const wardEl = document.getElementById("ward");
+const townEl = document.getElementById("town");
+const estateEl = document.getElementById("estate");
+const outputEl = document.getElementById("output");
+
+/* ================= HELPERS ================= */
+
+function resetSelect(el, placeholder) {
+  el.innerHTML = `<option value="">${placeholder}</option>`;
+  el.disabled = true;
+}
+
+function populate(el, items) {
+  resetSelect(el, "Select...");
+  items.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item;
+    opt.textContent = item;
+    el.appendChild(opt);
+  });
+  el.disabled = false;
+}
+
+/* ================= INIT ================= */
+
+populate(subCountyEl, Object.keys(nyeriLocations));
+
+/* ================= EVENTS ================= */
+
+subCountyEl.onchange = () => {
+  resetSelect(wardEl, "Select ward");
+  resetSelect(townEl, "Select town");
+  resetSelect(estateEl, "Select estate");
+  outputEl.style.display = "none";
+
+  if (subCountyEl.value) {
+    populate(wardEl, Object.keys(nyeriLocations[subCountyEl.value]));
+  }
+};
+
+wardEl.onchange = () => {
+  resetSelect(townEl, "Select town");
+  resetSelect(estateEl, "Select estate");
+  outputEl.style.display = "none";
+
+  populate(
+    townEl,
+    Object.keys(nyeriLocations[subCountyEl.value][wardEl.value])
+  );
+};
+
+townEl.onchange = () => {
+  resetSelect(estateEl, "Select estate");
+  outputEl.style.display = "none";
+
+  populate(
+    estateEl,
+    nyeriLocations[subCountyEl.value][wardEl.value][townEl.value]
+  );
+};
+
+estateEl.onchange = () => {
+  if (!estateEl.value) return;
+
+  const fullAddress = [
+    estateEl.value,
+    townEl.value,
+    wardEl.value,
+    subCountyEl.value,
+    "Nyeri County"
+  ].join(", ");
+
+  outputEl.style.display = "block";
+  outputEl.innerHTML = `
+    <strong>Selected Location</strong><br><br>
+    ${fullAddress}
+    <div class="breadcrumb">
+      <span>${subCountyEl.value}</span>
+      <span>${wardEl.value}</span>
+      <span>${townEl.value}</span>
+      <span>${estateEl.value}</span>
+    </div>
+  `;
+};
+
+/* ================= SAVE & REDIRECT ================= */
+
+document.getElementById("saveBtn").onclick = () => {
+  if (!estateEl.value) {
+    alert("Please complete all selections");
+    return;
+  }
+
+  const locationData = {
+    subCounty: subCountyEl.value,
+    ward: wardEl.value,
+    town: townEl.value,
+    estate: estateEl.value,
+    county: "Nyeri County"
+  };
+
+  localStorage.setItem(
+    "nyeri-selected-location",
+    JSON.stringify(locationData)
+  );
+
+  window.location.href =
+    "http://localhost:3000/pages/payment.html?id=3f508b18-9ccf-4eae-8ec9-8b2799e9b57e";
+};
+
+/* ================= RESET ================= */
+
+document.getElementById("resetBtn").onclick = () => {
+  subCountyEl.value = "";
+  resetSelect(wardEl, "Select ward");
+  resetSelect(townEl, "Select town");
+  resetSelect(estateEl, "Select estate");
+  outputEl.style.display = "none";
+};
+</script>
+
+</body>
+</html>
+

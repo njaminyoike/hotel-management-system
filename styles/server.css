@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #000;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+    overflow: hidden; /* Prevent scrolling due to fixed side menu */
+}
+
+/* Side Menu Styling */
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.side-menu a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #000000;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-menu a:hover {
+    color: #FFA500;
+    font-weight: bolder;
+}
+
+.side-menu .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.open-menu {
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff; /* White text color for better contrast */
+    background-color: #FFA500; /* Orange background */
+    padding: 5px 5px; /* Adding padding for better visual appearance */
+    border-radius: 30px;
+    position: absolute;
+    top: 10px; /* Adjusted to be at the top */
+    left: 10px; /* Adjusted to be at the left */
+    z-index: 100; /* Ensures it stays on top */
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.8); /* Glowing orange shadow */
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+header {
+    text-align: center;
+    padding: 10px;
+    background-color: #fff;
+}
+
+header .logo {
+    width: 50px;
+    height: auto;
+}
+
+main {
+    margin: 0;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    overflow-y: auto;
+    height: calc(100vh - 80px); /* Adjust height to fit the screen */
+}
+
+h1 {
+    text-align: center;
+    font-size: 20px;
+}
+
+h2 {
+    text-align: center;
+    color:#000;
+    font-weight: 100;
+    font-size: 15px;
+}
+
+h3 {
+    text-align: center;
+    color: #e67e22;
+}
+
+.nav-button {
+    max-width: 200px;
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #FFA500; /* Orange color */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-left: 550px;
+    font-weight: bold;
+}
+
+.nav-button:hover {
+    background-color: #ff8c00; /* Darker orange */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.upload-sms-button {
+    font-family: 'Montserrat', sans-serif;
+    display: inline-block;
+    padding: 10px 20px;
+    color: #008000; /* Green text color */
+    background-color: #fff; /* White background */
+    border: 2px solid #008000; /* Green border */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+thead {
+    background-color: #f4f4f4;
+}
+
+
+thead th {
+    font-weight: bold;
+    color: #333;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #eaeaea;
+
+}
+
+button.status.served {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+}
+
+button.status.served:hover {
+    background-color: #45a049; /* Darker green */
+    box-shadow: 0 0 15px 5px rgba(67, 160, 71, 0.6); /* Glowing green shadow */
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #fff;
+    margin-top: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.order-card {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.order-card h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.order-card p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.order-card button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.order-card button:hover {
+    background-color: #218838;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.popup-content select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.popup-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.popup-content button {
+    background-color: #FFA500;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup-content button:hover {
+    background-color: #a76d02;
+}
+
+.popup-content .close {
+    background-color: #dc3545;
+}
+
+.popup-content .close:hover {
+    background-color: #c82333;
+}
+
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #ffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    z-index: 1;
+}
+
+.side-menu a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 14px;
+    color: black;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-menu a:hover {
+    color: #FFA500;
+}
+
+.side-menu .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.open-menu {
+    font-size: 20px;
+    cursor: pointer;
+    margin: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+}

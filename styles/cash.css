@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #fff;
+    background-image: url('../images/Wall.jpg');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+}
+
+.container {
+    text-align: center;
+    width: 300px;
+    background-color: #ffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    width: 50px;
+    height: auto;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    background: url('icon.png') no-repeat center center;
+    background-size: contain;
+}
+
+h1 {
+    font-size: 16px;
+    font-weight: bolder;
+    margin: 0;
+    flex-grow: 1;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+main {
+    margin-top: 20px;
+}
+
+.payment-confirmation {
+    font-size: 18px;
+    margin: 20px 0;
+}
+
+.amount {
+    color: orange;
+    font-weight: bold;
+}
+
+.confirm-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.confirm-button:hover {
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+    font-weight: bolder;
+}
+
+.waiter-image {
+    margin-top: 20px;
+}
+
+.waiter-image img {
+    width: 100px;
+    height: auto;
+}
+
+footer {
+    margin-top: 20px;
+}
+
+.small-logo {
+    width: 30px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+footer p {
+    margin: 2px 0;
+    font-size: 12px;
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add new Employee</title>
+    <link rel="stylesheet" href="../styles/signup.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../pages/index.html">
+            </a>
+            <h1>Add a new Employee</h1>
+        </header>
+        <main>
+            <form id="signUpForm" action="/saveData" method="POST"> <!-- Updated action attribute -->
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+                
+                <label for="work-id">Work ID:</label> <!-- Corrected id attribute to work-id -->
+                <input type="text" id="work-id" name="work-id" placeholder="Enter your work ID" required> <!-- Corrected name attribute -->
+                
+                <label for="role">Role:</label>
+                    <select id="role" name="role" required>
+                        <option value="" disabled selected>Select a role</option>
+                        <option value="waiter">Waiter</option>
+                        <option value="chef">Chef</option>
+                        <option value="driver">Driver</option>
+                        <option value="cashier">Cashier</option>
+
+                    </select>
+
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                
+                <button type="submit" class="confirm-button">Sign Up</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

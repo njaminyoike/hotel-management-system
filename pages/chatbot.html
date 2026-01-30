@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BiteBot – Restaurant Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h2 { color: #0072ff; }
+
+    #chat-container {
+      width: 400px;
+      height: 550px;
+      background: white;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    #chat {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      margin: 6px 0;
+      padding: 10px 14px;
+      border-radius: 18px;
+      max-width: 80%;
+    }
+
+    .user-message {
+      background: #0072ff;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .bot-message {
+      background: #e0e0e0;
+      color: #333;
+      align-self: flex-start;
+    }
+
+    .typing {
+      font-style: italic;
+      opacity: 0.7;
+    }
+
+    #input-container {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+
+    #userInput {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+
+    #sendBtn {
+      margin-left: 10px;
+      padding: 10px 16px;
+      border-radius: 20px;
+      border: none;
+      background: #0072ff;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🍽️ BiteBot</h2>
+
+<div id="chat-container">
+  <div id="chat"></div>
+  <div id="input-container">
+    <input id="userInput" placeholder="Type message..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+let menuData = {};
+let cart = [];
+let lastSuggestedItem = null;
+
+const greetings = ["hi","hello","hey","good morning","good afternoon","good evening"];
+
+fetch("http://localhost:3000/api/menu")
+  .then(res => res.json())
+  .then(data => menuData = data);
+
+const chatBox = document.getElementById("chat");
+
+function addMessage(text, cls) {
+  const div = document.createElement("div");
+  div.className = `message ${cls}`;
+  div.innerHTML = text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showTyping() {
+  const div = document.createElement("div");
+  div.className = "message bot-message typing";
+  div.innerText = "🤔 ...";
+  chatBox.appendChild(div);
+  return div;
+}
+
+function saveCart() {
+  localStorage.setItem("cart", JSON.stringify(cart));
+  const total = cart.reduce((sum,i)=>sum + i.price * i.quantity,0);
+  localStorage.setItem("total", total);
+}
+
+function parseQuantityOrder(msg) {
+  const match = msg.match(/(\d+)\s+(.+)/);
+  if (!match) return null;
+  return { qty: parseInt(match[1]), name: match[2] };
+}
+
+function sendMessage() {
+  const input = userInput.value.trim();
+  if (!input) return;
+
+  addMessage(`<b>You:</b> ${input}`, "user-message");
+  userInput.value = "";
+
+  const msg = input.toLowerCase();
+
+  // Clear
+  if (msg === "clear") {
+    chatBox.innerHTML = "";
+    return;
+  }
+
+  // Greeting
+  if (greetings.includes(msg)) {
+    addMessage("<b>BiteBot:</b> Hello! What would you like to order today?", "bot-message");
+    return;
+  }
+
+  // Menu
+  if (msg.includes("menu")) {
+    for (let cat in menuData) {
+      let items = menuData[cat].map(i=>`${i.name} - KES ${i.price}`).join("<br>");
+      addMessage(`<b>${cat}</b><br>${items}`, "bot-message");
+    }
+    return;
+  }
+
+  // View cart
+  if (msg.includes("cart")) {
+    if (!cart.length) {
+      addMessage("<b>BiteBot:</b> Your cart is empty.", "bot-message");
+    } else {
+      let total = 0;
+      let text = cart.map(i=>{
+        total += i.price * i.quantity;
+        return `${i.name} × ${i.quantity}`;
+      }).join("<br>");
+      addMessage(`<b>BiteBot:</b><br>${text}<br><b>Total: KES ${total}</b>`, "bot-message");
+    }
+    return;
+  }
+
+  // Checkout
+  if (msg.includes("checkout") || msg.includes("pay")) {
+    if (!cart.length) {
+      addMessage("<b>BiteBot:</b> Your cart is empty.", "bot-message");
+    } else {
+      saveCart();
+      addMessage("<b>BiteBot:</b> Redirecting to payment...", "bot-message");
+      setTimeout(()=>location.href="/pages/payment.html",1000);
+    }
+    return;
+  }
+
+  // YES / NO
+  if (lastSuggestedItem) {
+    if (msg === "yes") {
+      const found = cart.find(i=>i.name===lastSuggestedItem.name);
+      found ? found.quantity++ : cart.push({...lastSuggestedItem,quantity:1});
+      saveCart();
+      addMessage(`<b>BiteBot:</b> ${lastSuggestedItem.name} added to your cart.`, "bot-message");
+      lastSuggestedItem = null;
+      return;
+    }
+    if (msg === "no") {
+      addMessage("<b>BiteBot:</b> Okay, not added.", "bot-message");
+      lastSuggestedItem = null;
+      return;
+    }
+  }
+
+  // Quantity orders (e.g. "5 chapati")
+  const parsed = parseQuantityOrder(msg);
+  if (parsed) {
+    for (let cat in menuData) {
+      for (let item of menuData[cat]) {
+        if (item.name.toLowerCase().includes(parsed.name)) {
+          const found = cart.find(i=>i.name===item.name);
+          found ? found.quantity += parsed.qty
+                : cart.push({...item, quantity: parsed.qty});
+          saveCart();
+          addMessage(`<b>BiteBot:</b> ${parsed.qty} ${item.name} added to cart.`, "bot-message");
+          return;
+        }
+      }
+    }
+  }
+
+  // Single item
+  for (let cat in menuData) {
+    for (let item of menuData[cat]) {
+      if (item.name.toLowerCase().includes(msg)) {
+        const typing = showTyping();
+        setTimeout(()=>{
+          typing.remove();
+          addMessage(`<b>BiteBot:</b> ${item.name} costs KES ${item.price}. Add to cart? (yes/no)`, "bot-message");
+          lastSuggestedItem = item;
+        },800);
+        return;
+      }
+    }
+  }
+
+  addMessage("<b>BiteBot:</b> I didn’t understand that. Try typing 'menu'.", "bot-message");
+}
+
+sendBtn.onclick = sendMessage;
+userInput.addEventListener("keydown", e=>e.key==="Enter" && sendMessage());
+</script>
+
+</body>
+</html>
+

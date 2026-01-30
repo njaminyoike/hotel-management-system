@@ -1,0 +1,11 @@
+node_modules/
+.env
+dist/
+build/
+*.log
+# Secrets & credentials
+*.json
+.env
+
+# Installers
+*.deb

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-PESA Payment</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background: linear-gradient(to right, #00c6ff, #0072ff); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+.container { background: #fff; padding: 30px 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 400px; width: 100%; text-align: center; transition: transform 0.3s ease; }
+.container:hover { transform: translateY(-5px); }
+h2 { margin-bottom: 20px; color: #0072ff; font-size: 28px; }
+#order-summary { text-align: left; margin-bottom: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; font-size: 14px; line-height: 1.6; color: #333; }
+.form-group { margin-bottom: 15px; }
+label { display: block; text-align: left; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+input[type="tel"], input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; transition: border 0.3s; }
+input:focus { border-color: #0072ff; outline: none; box-shadow: 0 0 5px rgba(0, 114, 255, 0.4); }
+#pay-btn { background: #0072ff; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background 0.3s, transform 0.2s; width: 100%; margin-top: 10px; }
+#pay-btn:hover:not(:disabled) { background: #005bb5; transform: scale(1.03); }
+#pay-btn:disabled { background: #ccc; cursor: not-allowed; }
+#status { margin-top: 20px; font-weight: bold; font-size: 14px; color: #0072ff; min-height: 20px; }
+.error { color: #ff0000; }
+.success { color: #00aa00; }
+@media (max-width: 450px) { .container { padding: 20px; } }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>M-PESA Payment</h2>
+    <div id="order-summary"></div>
+    
+    <div class="form-group">
+        <label for="phone">M-PESA Phone Number</label>
+        <input type="tel" id="phone" placeholder="e.g., 0712345678 or 254712345678">
+    </div>
+    
+    <button id="pay-btn">Pay with M-PESA</button>
+    <div id="status"></div>
+</div>
+
+<script>
+const orderSummaryEl = document.getElementById('order-summary');
+const statusEl = document.getElementById('status');
+const payBtn = document.getElementById('pay-btn');
+const phoneInput = document.getElementById('phone');
+
+let cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+let total = parseFloat(localStorage.getItem('total') || 0);
+let currentOrderId = null;
+
+// Display cart summary
+function displayOrderSummary() {
+    if (cartItems.length === 0) {
+        orderSummaryEl.innerHTML = '<p style="color: #ff0000;">Your cart is empty!</p>';
+        payBtn.disabled = true;
+        return;
+    }
+    
+    let html = '<strong>Order Summary:</strong><br>';
+    cartItems.forEach(item => {
+        html += `${item.name} × ${item.quantity} - KES ${(item.price * item.quantity).toFixed(2)}<br>`;
+    });
+    html += `<hr style="margin: 10px 0;"><strong>Total: KES ${total.toFixed(2)}</strong>`;
+    orderSummaryEl.innerHTML = html;
+}
+
+displayOrderSummary();
+
+// Create order first, then initiate payment
+payBtn.addEventListener('click', async () => {
+    const phoneNumber = phoneInput.value.trim();
+    
+    if (!phoneNumber) {
+        showStatus('Please enter your M-PESA phone number', 'error');
+        return;
+    }
+    
+    if (cartItems.length === 0) {
+        showStatus('Your cart is empty', 'error');
+        return;
+    }
+    
+    payBtn.disabled = true;
+    showStatus('Creating order...', '');
+    
+    try {
+        // Step 1: Create order in database
+        const orderRes = await fetch('/api/add-items', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cartItems: cartItems,
+                phone: phoneNumber,
+                location: 'Online Order' // Default location
+            })
+        });
+        
+        if (!orderRes.ok) {
+            throw new Error('Failed to create order');
+        }
+        
+        const orderData = await orderRes.json();
+        currentOrderId = orderData.orderId;
+        
+        if (!currentOrderId) {
+            throw new Error('Order ID not received');
+        }
+        
+        showStatus('Initiating M-PESA payment...', '');
+        
+        // Step 2: Initiate M-PESA payment
+        const paymentRes = await fetch('/api/mpesa/initiate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                orderNumber: currentOrderId,
+                phoneNumber: phoneNumber
+            })
+        });
+        
+        const paymentData = await paymentRes.json();
+        
+        if (paymentData.success) {
+            showStatus(paymentData.customerMessage || 'Check your phone for M-PESA prompt', 'success');
+            
+            // Start polling payment status
+            startPaymentStatusPolling(currentOrderId);
+            
+        } else {
+            showStatus('Payment failed: ' + (paymentData.error || 'Unknown error'), 'error');
+            payBtn.disabled = false;
+        }
+        
+    } catch (err) {
+        console.error('Error:', err);
+        showStatus('Error: ' + err.message, 'error');
+        payBtn.disabled = false;
+    }
+});
+
+// Poll payment status
+function startPaymentStatusPolling(orderId) {
+    let attempts = 0;
+    const maxAttempts = 60; // Poll for 2 minutes (60 * 2 seconds)
+    
+    const interval = setInterval(async () => {
+        attempts++;
+        
+        try {
+            const res = await fetch(`/api/mpesa/status/${orderId}`);
+            const data = await res.json();
+            
+            if (data.paymentStatus === 'completed') {
+                clearInterval(interval);
+                showStatus('Payment successful! Redirecting...', 'success');
+                
+                // Clear cart
+                localStorage.removeItem('cart');
+                localStorage.removeItem('total');
+                
+                // Redirect to order status page
+                setTimeout(() => {
+                    window.location.href = `/pages/orderstate.html?id=${orderId}`;
+                }, 2000);
+                
+            } else if (data.paymentStatus === 'failed') {
+                clearInterval(interval);
+                showStatus('Payment failed. Please try again.', 'error');
+                payBtn.disabled = false;
+            }
+            
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                showStatus('Payment timeout. Check order status page.', 'error');
+                payBtn.disabled = false;
+            }
+            
+        } catch (err) {
+            console.error('Status check error:', err);
+        }
+        
+    }, 2000); // Check every 2 seconds
+}
+
+function showStatus(message, type) {
+    statusEl.textContent = message;
+    statusEl.className = type;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Management System Admin Page</title>
+    <link rel="stylesheet" href="../styles/admin.css">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Admin Page</h1>
+        </div>
+    </header>
+
+    <section class="container">
+        <div class="grid">
+
+            <div class="card">
+                <h2>Sales Figures in this month</h2>
+                <canvas id="salesChart" width="400" height="200"></canvas>
+            </div>
+
+            <div class="card">
+                <button id="generateMonthlyReportBtn" onclick="window.location.href='../pages/generateReport.html';">Generate Monthly Report</button>
+                <button id="manageEmployeesBtn">Manage Employees</button>
+                <p id="report-status"></p>
+            </div>
+
+            <!-- Modal for managing employees -->
+            <div id="employeeModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Select an Action</h2>
+                    <div class="modal-buttons">
+                        <button onclick="window.location.href='../pages/employee_signup.html';">Add New Employee</button>
+                        <button onclick="window.location.href='../pages/edit_employees.html';">Edit and Delete existing employees</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../scripts/admin.js"></script>
+    <script>
+        // Get modal element
+        var modal = document.getElementById("employeeModal");
+
+        // Get button that opens the modal
+        var btn = document.getElementById("manageEmployeesBtn");
+
+        // Get <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

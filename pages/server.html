@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servers Application</title>
+    <link rel="stylesheet" href="../styles/server.css">
+</head>
+<body>
+    <!-- Side Menu -->
+    <span class="open-menu" onclick="openMenu()">&#9776;</span>
+    <div id="mySideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">&times;</a>
+        <a href="../views/available.ejs">Available Meals</a>
+        <a href="../pages/add-meal.html">Add Meal</a>
+        <a href="../pages/chatbot.html">Order via AI </a>
+        <a href="../pages/employee_signin.html">Log Out</a>
+        <a href="../pages/my_server_history.html">History</a>
+    </div>
+ <main>
+        <a href="../views/available.ejs" class="nav-button">Modify Available Meals</a>
+        <h3>Orders List</h3>
+        <table id="orders-list">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Waiter no/Phone Number</th>
+                    <th>Items</th>
+                    <th>State</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Order rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </main>
+<!-- Popup for selecting a driver -->
+    <div id="driver-popup" class="popup">
+        <div class="popup-content">
+            <h3>Select a Driver</h3>
+            <select id="driver-dropdown">
+                <!-- Driver options will be dynamically inserted here -->
+            </select>
+            <button id="confirm-driver-button">Confirm</button>
+            <button id="close-driver-popup" class="close">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/get-items')
+                .then(response => response.json())
+                .then(async data => {
+                    const ordersList = document.getElementById('orders-list').getElementsByTagName('tbody')[0];
+                    const serverId = localStorage.getItem('workId');
+    
+                    // Group items by phone number
+                    const groupedItems = data.reduce((acc, item) => {
+                        if (!acc[item.customerPhone]) {
+                            acc[item.customerPhone] = [];
+                        }
+                        acc[item.customerPhone].push(item);
+                        return acc;
+                    }, {});
+    
+                    // Function to fetch name from the database
+                    async function fetchName(phone) {
+                        if (phone.startsWith('w')) {
+                            try {
+                                const response = await fetch(`/get-employee?workId=${phone}`);
+                                const employee = await response.json();
+                                return employee.name || 'Unknown';
+                            } catch (error) {
+                                console.error('Error fetching employee:', error);
+                                return 'Unknown';
+                            }
+                        } else if (phone.startsWith('0')) {
+                            try {
+                                const response = await fetch(`/get-customer?phone=${phone}`);
+                                const customer = await response.json();
+                                return customer.name || 'Unknown';
+                            } catch (error) {
+                                console.error('Error fetching customer:', error);
+                                return 'Unknown';
+                            }
+                        }
+                        return 'Unknown';
+                    }
+    
+                    // Populate table rows with the fetched data
+                    for (const [phone, items] of Object.entries(groupedItems)) {
+                        const row = document.createElement('tr');
+    
+                        // Name cell
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = await fetchName(phone);
+                        row.appendChild(nameCell);
+    
+                        // Waiter no/Phone Number cell
+                        const phoneCell = document.createElement('td');
+                        phoneCell.textContent = phone;
+                        row.appendChild(phoneCell);
+    
+                        // Items cell
+                        const itemsCell = document.createElement('td');
+                        const itemCounts = items.reduce((acc, item) => {
+                            acc[item.name] = (acc[item.name] || 0) + item.quantity;
+                            return acc;
+                        }, {});
+                        itemsCell.innerHTML = Object.entries(itemCounts)
+                            .map(([name, quantity]) => `${name} x${quantity}`)
+                            .join('<br>');
+                        row.appendChild(itemsCell);
+    
+                        // State cell
+                        const stateCell = document.createElement('td');
+                        stateCell.textContent = items[0].state === 'online' ? 'Ordered online' : 'In house order';
+                        row.appendChild(stateCell);
+    
+                        // Action cell
+                        const actionCell = document.createElement('td');
+                        const button = document.createElement('button');
+                        button.textContent = 'Click here if meal is ready to serve';
+                        button.className = 'status served';
+                        button.addEventListener('click', () => {
+                            if (items[0].state === 'online') {
+                                showDriverPopup(items[0].orderId, items[0]._id);
+                            } else {
+                                Promise.all(items.map(item =>
+                                    fetch(`/update-item/${item._id}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ serverId })  // Send serverId in the request body
+                                    }).then(response => response.json())
+                                ))
+                                .then(() => {
+                                    row.remove(); // Remove the row after updating all items
+                                })
+                                .catch(error => console.error('Error:', error));
+                            }
+                        });
+                        actionCell.appendChild(button);
+                        row.appendChild(actionCell);
+    
+                        ordersList.appendChild(row);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    
+        // Function to open side menu
+        function openMenu() {
+            document.getElementById("mySideMenu").style.width = "200px";
+            document.body.style.marginLeft = "200px";
+        }
+    
+        // Function to close side menu
+        function closeMenu() {
+            document.getElementById("mySideMenu").style.width = "0";
+            document.body.style.marginLeft = "0";
+        }
+    
+        // Function to show the driver selection popup
+        function showDriverPopup(orderId, itemId) {
+            const popup = document.getElementById('driver-popup');
+            const driverDropdown = document.getElementById('driver-dropdown');
+            driverDropdown.innerHTML = ''; // Clear existing driver options
+    
+            // Fetch drivers whose workId starts with 'd'
+            fetch('/get-drivers?workIdPrefix=d')
+                .then(response => response.json())
+                .then(drivers => {
+                    drivers.forEach(driver => {
+                        const option = document.createElement('option');
+                        option.value = driver.workID;
+                        option.textContent = `${driver.name} (${driver.phone})`;
+                        driverDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching drivers:', error));
+    
+            popup.style.display = 'flex';
+    
+            document.getElementById('close-driver-popup').onclick = () => {
+                popup.style.display = 'none'; // Hide popup
+            };
+    
+            document.getElementById('confirm-driver-button').onclick = () => {
+                const selectedDriverPhone = driverDropdown.value;
+                if (selectedDriverPhone) {
+                    fetch('/create-delivery', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: itemId,
+                            orderId,
+                            driver: selectedDriverPhone,
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Delivery confirmed!');
+                            popup.style.display = 'none'; // Hide popup
+                            window.location.reload();
+                        } else {
+                            alert('Failed to confirm delivery.');
+                        }
+                    })
+                    .catch(error => console.error('Error confirming delivery:', error));
+                } else {
+                    alert('Please select a driver.');
+                }
+            };
+        }
+    </script>
+    
+</body>
+</html>

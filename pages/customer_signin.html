@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Sign In</title>
+    <link rel="stylesheet" href="../styles/signin.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            </a>
+            <h1>Customer Sign In</h1>
+        </header>
+        <main>
+            <form id="customer_signin">
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" placeholder="Enter your phone number" required>
+
+                <label for="password">Password:</label>
+                <p id="error-message" style="display: none;">Wrong password!!</p> <!-- Hidden initially -->
+                <input type="password" id="password" placeholder="Enter your password" required>
+
+                <button type="submit" class="confirm-button">Sign In</button>
+            </form>
+            <script>
+                document.getElementById("customer_signin").addEventListener("submit", async function (event) {
+                    event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                    const phone = document.getElementById("phone").value;
+                    const password = document.getElementById("password").value;
+
+                    try {
+                        // Sign in the customer
+                        const signinResponse = await fetch('/customer_signin', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ phone, password })
+                        });
+
+                        const signinData = await signinResponse.json();
+
+                        if (signinData.success) {
+                            localStorage.setItem("phone", phone);
+                            
+                            window.location.href = "../pages/location.html";
+                        } else {
+                            // Show error message if login fails
+                            const passwordInput = document.getElementById("password");
+                            passwordInput.classList.add("error");
+                            const errorMessage = document.getElementById("error-message");
+                            errorMessage.textContent = "Wrong password";
+                            errorMessage.style.display = "block"; // Show the error message
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while signing in. Please try again.');
+                    }
+                });
+            </script>
+
+            <a href="customer_signup.html">Don't have an account? Sign Up</a>
+        </main>
+    </div>
+</body>
+
+</html>

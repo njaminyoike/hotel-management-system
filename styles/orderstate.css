@@ -1,0 +1,445 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 150px;
+}
+
+.order-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.order-info div {
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+}
+
+.order-info div:not(:last-child) {
+    border-right: 1px solid #ddd;
+}
+
+.order-status {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.order-status h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.order-status p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.progress-step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+}
+
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: #ddd;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    transform: translateX(-50%);
+}
+
+.progress-step .icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    background-color: #ddd;
+    border-radius: 50%;
+}
+
+.progress-step.active .icon {
+    background-color: #28a745;
+}
+
+.progress-step.completed .icon {
+    background-color: #28a745;
+}
+
+.progress-step p {
+    font-size: 14px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.order-details-card {
+    background-color: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-details-card h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.order-details-card p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.delivery-details {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9f7f5;
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    display: none;
+}
+
+.delivery-details p {
+    font-size: 16px;
+    margin: 5px 0;
+    color: #333;
+}
+
+.completion-code {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #d9534f;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    /* background-color: #fff; */
+    background-image: url('../images/Wall.jpg');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+}
+
+/* Side Menu Styling */
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.side-menu a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #000000;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-menu a:hover {
+    color: #FFA500;
+    font-weight: bolder;
+}
+
+.side-menu .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.open-menu {
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff; /* White text color for better contrast */
+    background-color: #FFA500; /* Orange background */
+    padding: 5px 5px; /* Adding padding for better visual appearance */
+    border-radius: 30px;
+    position: absolute;
+    top: 10px; /* Adjusted to be at the top */
+    left: 10px; /* Adjusted to be at the left */
+    z-index: 100; /* Ensures it stays on top */
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.8); /* Glowing orange shadow */
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    /* background-image: url('../images/bg2.jpg');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover; */
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+h2 {
+    text-align: center;
+}
+.logo {
+    width: 50px;
+    height: auto;
+    margin-right: 10px;
+}
+
+main {
+    text-align: center;
+}
+
+.order-status {
+    margin-bottom: 20px;
+    margin-right: 50px;
+    align-items: center;
+    align-content: center;
+}
+
+.chef-icon {
+    width: 100px;
+    height: auto;
+    margin-top: 20px;
+    /* HTML: <div class="loader"></div> */
+}
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 200px;
+    height: 14px;
+    box-shadow: 0 3px 0 #fff;
+    position: relative;
+    clip-path: inset(-40px 0 -5px)
+  }
+  .loader:before {
+    content: "";
+    position: absolute;
+    inset: auto calc(50% - 17px) 0;
+    height: 50px;
+    --g:no-repeat linear-gradient(#FFA500 0 0);
+    background: var(--g),var(--g),var(--g),var(--g);
+    background-size: 16px 14px;
+    animation:
+      l7-1 2s infinite linear,
+      l7-2 2s infinite linear;
+  }
+  @keyframes l7-1 {
+    0%,
+    100%  {background-position: 0 -50px,100% -50px}
+    17.5% {background-position: 0 100%,100% -50px,0 -50px,100% -50px}
+    35%   {background-position: 0 100%,100% 100% ,0 -50px,100% -50px}
+    52.5% {background-position: 0 100%,100% 100% ,0 calc(100% - 16px),100% -50px}
+    70%,
+    98%  {background-position: 0 100%,100% 100% ,0 calc(100% - 16px),100% calc(100% - 16px)}
+  }
+  @keyframes l7-2 {
+    0%,70% {transform:translate(0)}
+    100%  {transform:translate(200%)}
+  }
+
+footer {
+    text-align: center;
+    font-size: 10px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 100px;
+}
+
+.order-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.order-info div {
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.order-info div:not(:last-child) {
+    border-right: 1px solid #ddd;
+}
+
+.order-status {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.order-status h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.order-status p {
+    font-size: 16px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.progress-step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+}
+
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: #ddd;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    transform: translateX(-50%);
+}
+
+.progress-step .icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    background-color: #ddd;
+    border-radius: 50%;
+    transition: box-shadow 0.3s ease; /* Smooth transition for the glow effect */
+}
+
+.progress-step.active .icon {
+    background-color: #FFA500; /* Orange background for active step */
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.8); /* Orange glow */
+}
+
+.progress-step.completed .icon {
+    background-color: #28a745; /* Bright green background for completed step */
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.8); /* Bright green glow */
+}
+
+.progress-step p {
+    font-size: 14px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.order-details-card {
+    background-color: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-details-card h3 {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.order-details-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.delivery-details {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9f7f5;
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    display: none;
+}
+
+.delivery-details p {
+    font-size: 14px;
+    margin: 3px 0;
+    color: #333;
+}
+
+.completion-code {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #d9534f;
+}

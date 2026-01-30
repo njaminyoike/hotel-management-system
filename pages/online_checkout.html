@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/mobile.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- Side Menu -->
+    <span class="open-menu" onclick="openMenu()">&#9776;</span>
+    <div id="mySideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">&times;</a>
+        <a href="../pages/index.html">Home</a>
+        <a href="../views/menu.ejs">Menu</a>
+        <a href="../pages/online_checkout.html">Checkout</a>
+        <a href="../pages/orderstate.html">Order State</a>
+        <a href="../pages/customer_signin.html">Log Out</a>
+    </div>
+    <div class="container">
+        <header>
+            <h1>Restaurant Waiting Application</h1>
+            <div class="icon"><!-- Add icon here --></div>
+        </header>
+        <main>
+            <p class="payment-method">Online Payment:</p>
+            <form id="paymentForm" action="orderstate.html" method="GET">
+                <label for="phone-input">Enter Phone number to pay with</label>
+                <input type="text" id="phone-input" name="phone" placeholder="07xxxxxxxx" required>
+
+                <label for="location">Select Your Location</label>
+                
+                <select id="location" name="location" required>
+                    <option value="" disabled selected>Select a region</option>
+                    <option value="nyeri-central">Nyeri Central</option>
+                    <option value="othaya">Othaya</option>
+                    <option value="tetu">Tetu</option>
+                    <option value="mathira">Mathira</option>
+                    <option value="kieni">Kieni</option>
+                    <option value="mukurwe-ini">Mukurwe-ini</option>
+                </select>
+
+                <span id="shipping-fee" class="shipping-fee"></span>
+
+                <p id="shipping-fee"></p>
+
+                <label for="mpesa-code">Enter M-Pesa Transaction Code</label>
+                <input type="text" id="mpesa-code" name="mpesaCode" placeholder="SH674HWX83" required>
+
+                <p id="amount"></p>
+                <button type="submit" class="confirm-button">Confirm</button>
+            </form>
+            <div class="payment-received" style="display: none;">
+                <img src="../images/paid.png" alt="Check Icon" class="check-icon">
+                <p>Payment Received!</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Function to open side menu
+        function openMenu() {
+            document.getElementById("mySideMenu").style.width = "200px";
+            document.getElementById("main").style.marginLeft = "200px";
+        }
+
+        // Function to close side menu
+        function closeMenu() {
+            document.getElementById("mySideMenu").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+
+        // Shipping fees by Nyeri region
+        const shippingFees = {
+            'nyeri-central': 200,
+            'othaya': 250,
+            'tetu': 300,
+            'mathira': 350,
+            'kieni': 400,
+            'mukurwe-ini': 450
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const total = localStorage.getItem('total');
+            document.getElementById('amount').textContent = `Amount: ksh. ${total}`;
+        });
+
+        $(document).ready(function() {
+            $('#location').on('change', function() {
+                const selectedLocation = $(this).val();
+                const foodAmount = parseInt(localStorage.getItem('total'), 10) || 0;
+                const shippingFee = shippingFees[selectedLocation] || 0;
+                const totalAmount = foodAmount + shippingFee;
+                
+                $('#shipping-fee').text(`Shipping Fee: ksh. ${shippingFee}`);
+                $('#amount').text(`Total: ksh. ${totalAmount}`);
+            });
+        });
+
+        $(document).ready(function() {
+            $('#paymentForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+                
+                // Get form data
+                var phoneNumber = $('#phone-input').val();
+                var mpesaCode = $('#mpesa-code').val();
+                var location = $('#location').val();
+                var amount = $('#amount').text().replace('Total Amount: ksh. ', '');
+
+                // Store the mpesaCode in localStorage
+                localStorage.setItem('mpesaCode', mpesaCode);
+
+                // Send data to the verify-payment endpoint
+                $.ajax({
+                    url: '/api/verify-payment', // Your server endpoint for verification
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        transactionCode: mpesaCode,
+                        amount: amount
+                    }),
+                    success: function(response) {
+                        if (response.status === 'paid') {
+                            alert('Payment confirmed! Thank you for gifting yourself a delicious treat!');
+                            window.location.href = 'orderstate.html'; // Redirect on successful payment
+                        } else {
+                            alert('Payment not confirmed. Please check your transaction and try again.');
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while verifying payment.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

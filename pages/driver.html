@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Driver Dashboard</title>
+    <link rel="stylesheet" href="../styles/driver.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Pending Orders</h1>
+        <button onclick="window.location.href='driver_history.html'">
+            My Delivery History
+        </button>
+
+        <div id="orders">
+            <!-- Order cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Popup for confirmation code -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <button class="close-button" onclick="closePopup()">&#10005;</button>
+            <h3>Enter Confirmation Code</h3>
+            <input type="text" id="confirmation-code" placeholder="Confirmation Code">
+            <button id="confirm-button">Confirm</button>
+            <p id="confirmation-message"></p>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your actual driver ID
+        const driverId = localStorage.getItem("workId");
+
+        // Function to fetch deliveries from the server
+        async function fetchDeliveries() {
+            try {
+                const response = await fetch(`/deliveries/${driverId}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const deliveries = await response.json();
+
+                // Render the fetched deliveries
+                renderOrders(deliveries);
+            } catch (error) {
+                console.error('Error fetching deliveries:', error);
+            }
+        }
+
+        // Function to render orders
+        function renderOrders(deliveries) {
+            const ordersContainer = document.getElementById('orders');
+            ordersContainer.innerHTML = ''; // Clear existing orders
+
+            deliveries.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+
+                orderCard.innerHTML = `
+                    <h3>Order ID: ${order.orderId.split("-")[0]}</h3>
+                    <p>Phone: ${order.phone}</p>
+                    <p>Location: ${order.location}</p>
+                    <button onclick="markAsDelivered('${order.orderId}')">Mark as Delivered</button>
+                `;
+
+                ordersContainer.appendChild(orderCard);
+            });
+        }
+
+        // Function to show the popup
+        function showPopup(orderId) {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'flex';
+
+            document.getElementById('confirm-button').onclick = async () => {
+                const confirmationCode = document.getElementById('confirmation-code').value;
+                const confirmationMessage = document.getElementById('confirmation-message');
+
+                try {
+                    const response = await fetch(`/update-delivery/${orderId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            driver: driverId, // Pass the driver ID or other relevant data
+                            code: confirmationCode
+                        })
+                    });
+
+                    const result = await response.json();
+                    confirmationMessage.textContent = result.message;
+
+                    if (response.ok && result.success) {
+                        // Optionally refresh the orders list or remove the delivered order
+                        fetchDeliveries(); // Refresh the list
+                    }
+                    alert(result.message)
+                    window.location.reload();
+                } catch (error) {
+                    console.error('Error updating delivery:', error);
+                    confirmationMessage.textContent = 'An error occurred. Please try again.';
+                }
+
+                popup.style.display = 'none'; // Hide popup after confirmation
+            };
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Function to mark order as delivered
+        function markAsDelivered(orderId) {
+            showPopup(orderId);
+        }
+
+        // Function to start delivery
+        async function startDelivery(orderId) {
+            try {
+                const response = await fetch(`/start-delivery/${orderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        driver: driverId // Pass the driver ID or other relevant data
+                    })
+                });
+
+                const result = await response.json();
+                alert(result.message);
+
+                if (response.ok && result.success) {
+                    fetchDeliveries(); // Refresh the list
+                }
+            } catch (error) {
+                console.error('Error starting delivery:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+
+        // Initialize orders on page load
+        document.addEventListener('DOMContentLoaded', fetchDeliveries);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!-- views/menu.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="../styles/menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
+</head>
+<body>
+    <header>
+        <h1>Menu</h1>
+        <p>Pick a treat!</p>
+    </header>
+
+    <section class="menu-section">
+        <div class="menu-grid">
+            <% menuItems.forEach(item => { %>
+            <div class="menu-item">
+                <div class="menu-item-card">
+                    <img src="<%= item.image %>" alt="<%= item.name %>" class="menu-img">
+                    <div class="menu-item-details">
+                        <p class="menu-item-name"><%= item.name %></p>
+                        <p class="menu-item-price">Tsh <%= item.price %></p>
+                    </div>
+                    <button class="menu-item-button">
+                        <a href="../pages/customer_signin.html"><img src="../images/icons8-cart-24.png" alt="Cart" alt="Cart Icon" class="cart-icon"></a>
+                    </button>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </section>
+</body>
+</html>

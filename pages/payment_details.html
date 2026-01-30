@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Details</title>
+    <link rel="stylesheet" href="../styles/payment_details.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=AUXbJ1MpXAA28xCuZbw_n-BkB6aAksDIXAES6RN_SYjE5Pp1GNwdcbpRVy9EJP6tgd2KFV80ir7_B58z"></script>
+    <style>
+        /* Reset & Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+        * { font-family: 'Montserrat', sans-serif; margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            background-color: #fff;
+            background-image: url('../images/Wall.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: #000;
+        }
+
+        main {
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        .payment-details {
+            background-color: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .payment-details h3 { margin-bottom: 15px; }
+
+        .payment-details input,
+        .payment-details select {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .payment-buttons {
+            display: flex;
+            flex-direction: column; /* stack vertically */
+            gap: 10px;
+            width: 100%;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .payment-button {
+            width: 95%;
+            padding: 12px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .payment-button.cash { background-color: #e67e22; color: #fff; }
+        .payment-button.mpesa { background-color: #fcbf49; color: #000; }
+        .payment-button.paypal { background-color: #0070ba; color: #fff; }
+
+        .payment-button:hover {
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        #paypal-button-container { margin-top: 10px; }
+    </style>
+</head>
+<body>
+<main>
+    <section class="payment-details">
+        <h3>Payment Details</h3>
+        <p id="amount"></p>
+
+        <input type="text" id="customer-name" placeholder="Enter Customer Name">
+        <select id="payment-method">
+            <option value="cash">Cash</option>
+            <option value="debit-card">Debit Card</option>
+        </select>
+
+        <div class="payment-buttons">
+            <button type="button" class="payment-button cash">Pay with Cash</button>
+            <button type="button" class="payment-button mpesa">Pay with M-PESA</button>
+            <button type="button" class="payment-button paypal">Pay with PayPal</button>
+        </div>
+
+        <div id="paypal-button-container" style="display:none;"></div>
+    </section>
+</main>
+
+<script>
+    const totalAmount = localStorage.getItem('selectedTableTotal') || 0;
+    document.getElementById('amount').textContent = `Amount: ksh. ${totalAmount}`;
+
+    // Cash Payment
+    document.querySelector(".cash").addEventListener("click", async () => {
+        const customerName = document.getElementById('customer-name').value;
+        if (!customerName.trim()) { alert("Enter customer name"); return; }
+        const foodOrdered = ["Pizza", "Pasta"]; // replace with actual items
+        try {
+            const res = await fetch('/api/payment/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerName, paymentMethod:'cash', foodOrdered, totalAmount })
+            });
+            const data = await res.json();
+            alert(data.message);
+            window.location.href = '../views/venueMenu.ejs';
+        } catch(err) {
+            console.error(err);
+            alert('Payment failed.');
+        }
+    });
+
+    // M-PESA Payment
+    document.querySelector(".mpesa").addEventListener("click", async () => {
+        const customerName = document.getElementById('customer-name').value;
+        if (!customerName.trim()) { alert("Enter customer name"); return; }
+        try {
+            const res = await fetch('/api/payment/mpesa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerName, totalAmount })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('M-PESA payment initiated. Check your phone.');
+            } else {
+                alert('Failed: ' + data.error);
+            }
+        } catch(err) {
+            console.error(err);
+            alert('M-PESA payment failed.');
+        }
+    });
+
+    // PayPal Payment
+    document.querySelector(".paypal").addEventListener("click", () => {
+        document.getElementById('paypal-button-container').style.display = 'block';
+        paypal.Buttons({
+            createOrder: (data, actions) => actions.order.create({
+                purchase_units: [{ amount: { value: totalAmount }, description: 'Order from Restaurant' }]
+            }),
+            onApprove: async (data, actions) => {
+                await actions.order.capture();
+                alert('PayPal Payment Successful!');
+                window.location.href = '../views/venueMenu.ejs';
+            },
+            onError: err => { console.error(err); alert('PayPal Error'); }
+        }).render('#paypal-button-container');
+    });
+</script>
+</body>
+</html>
+

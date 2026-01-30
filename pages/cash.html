@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <link rel="stylesheet" href="../styles/cash.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> Waiting...........</h1>
+            <div class="icon"><!-- Add icon here --></div>
+        </header>
+        <main>
+            <p class="payment-confirmation">Confirm Payment Of<br>
+                <span id="amount"></span>
+            </p>
+            <button class="confirm-button" onclick="confirmPayment()">Confirm</button>
+            <div class="waiter-image">
+                <img src="../images/waiter.jpeg" alt="Waiter Image">
+            </div>
+        </main>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const total = localStorage.getItem('selectedTableTotal');
+                document.getElementById('amount').textContent = `Amount: KSH. ${total}`;
+            });
+
+            async function confirmPayment() {
+                const tableNumber = localStorage.getItem('selectedTableNumber');
+
+                if (!tableNumber) {
+                    alert('No table number found. Please try again.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/items/mark-as-paid/${tableNumber}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`Failed to update items: ${errorData.error}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Update response:', data);
+
+                    alert('Payment confirmed. Thank you!');
+                    window.location.href = '../views/venueMenu.ejs'; // Redirect to venue menu or another page
+                } catch (error) {
+                    console.error('Error confirming payment:', error);
+                    alert(`Failed to confirm payment: ${error.message}. Please try again.`);
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

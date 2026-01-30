@@ -1,0 +1,471 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fff;
+}
+
+/* Side Menu Styling */
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.side-menu a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #000000;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-menu a:hover {
+    color: #FFA500;
+    font-weight: bolder;
+}
+
+.side-menu .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.open-menu {
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff; /* White text color for better contrast */
+    background-color: #FFA500; /* Orange background */
+    padding: 5px 5px; /* Adding padding for better visual appearance */
+    border-radius: 30px;
+    position: absolute;
+    top: 10px; /* Adjusted to be at the top */
+    left: 10px; /* Adjusted to be at the left */
+    z-index: 100; /* Ensures it stays on top */
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.8); /* Glowing orange shadow */
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+/* Styling for the cart page header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+    /* background-image: url('../images/bg2.jpg'); */
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+    border-bottom: 1px solid #ddd;
+    margin-top: 0px;
+    width: 100%;
+}
+
+header .logo {
+    width: 50px; /* Adjust the logo size as needed */
+}
+
+header .cart-heading {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 24px;
+    margin: 0;
+    
+}
+
+header .header-icons img {
+    width: 24px; /* Adjust the icon size as needed */
+    cursor: pointer;
+    margin-right: 0px;
+}
+
+main {
+    margin-top: 20px;
+    background-color: white;
+}
+
+input {
+    width: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+}
+
+input:focus {
+    border-color: #FFA500;
+    box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+    outline: none;
+}
+
+.table-number {
+    align-items: center;
+    margin-left: 600px;
+}
+
+/* Styling for the cart list container */
+.cart-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+/* Styling for the cart items */
+.cart-item {
+    display: flex; /* Flexbox */
+    flex-direction: row; /* Row layout */
+    align-items: center; /* Center align items */
+    border: 1px solid #ddd; /* Border */
+    padding: 15px; /* Padding */
+    margin: 10px 0; /* Margin */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+    width: 80%; /* Adjust width as needed */
+    max-width: 800px; /* Max width */
+}
+
+/* Styling for cart item images */
+.cart-item img {
+    width: 100px; /* Set a fixed width */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners for images */
+    margin-right: 20px; /* Margin between image and text */
+}
+
+/* Styling for cart item details */
+.cart-item-details {
+    display: flex; /* Flexbox */
+    flex-direction: column; /* Column layout */
+    align-items: flex-start; /* Align text to the left */
+    flex-grow: 1; /* Take up remaining space */
+}
+
+/* Styling for cart item names */
+.cart-item h2 {
+    font-size: 20px; /* Font size */
+    margin: 0 0 10px 0; /* Margin */
+}
+
+/* Styling for cart item descriptions */
+.cart-item p {
+    font-size: 14px; /* Font size */
+    color: #666; /* Gray color */
+    margin: 5px 0; /* Margin */
+}
+
+.cart-total {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    /* margin: 275px; */
+    margin-left: 275px;
+    width: 80%;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 2px solid #ddd;
+    padding-top: 15px;
+    flex-direction: column;  /* Stack content vertically if necessary */
+}
+
+#cart-total-container {
+    margin-top: 20px;
+}
+/* Footer styling */
+footer {
+    text-align: center;
+    padding: 2px 0;
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    margin-bottom: 0px;
+}
+
+footer p {
+    margin: 0;
+    color: #666;
+}
+
+/* deliveryCart.css */
+
+/* Style for the Confirm Order section */
+.confirm-order {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Style for the Confirm Order button */
+#confirm-order-btn {
+    font-family: 'Montserrat', sans-serif;
+    padding: 10px 20px;
+    font-size: 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#confirm-order-btn:hover {
+    background-color: #45a049;
+    font-weight: bolder;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
+}
+
+.cart-item img {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-details h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.cart-item-details p {
+    margin: 5px 0;
+}
+
+.cart-item-details button {
+    padding: 10px;
+    margin: 5px 5px 0 0;
+    border: none;
+    background-color: #ff4d4d;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.cart-item .item-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.cart-item-details button:hover {
+    background-color: #ff3333;
+}
+
+/* Styling for the reduce quantity button */
+.cart-item-details .reduce-quantity {
+    background-color: #ffa500;
+}
+
+.cart-item-details .reduce-quantity:hover {
+    background-color: #e69500;
+}
+
+.cart-item-details .increase-quantity {
+    background-color: #4CAF50;
+}
+
+.cart-item-details .increase-quantity:hover {
+    background-color: #45a049;
+}
+/* Styling for quantity buttons */
+.quantity-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.quantity-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#confirm-order-btn:hover {
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+  }
+  
+  /* Lightning effect
+  #confirm-order-btn::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 120%;
+    height: 120%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    transform: rotate(-30deg);
+    opacity: 0.7;
+    animation: lightning 1.5s infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes lightning {
+    0%, 100% {
+      transform: translateX(-50%) rotate(-30deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateX(0) rotate(-30deg);
+      opacity: 1;
+    }
+  } */
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Confetti effect */
+@keyframes confettiFall {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+#confetti {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: randomColor();
+    opacity: 0.8;
+    border-radius: 50%;
+    animation: confettiFall 1s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+/* Styling for the table-number container */
+.table-number {
+    margin: 20px 0;
+    text-align: center; /* Center the select box horizontally */
+}
+
+/* Styling for the select element */
+#table-number {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    width: 200px; /* Adjust width as needed */
+    max-width: 100%; /* Ensure it doesn't overflow the container */
+}
+
+/* Styling for the select element when focused */
+#table-number:focus {
+    border-color: #FFA500; /* Orange border on focus */
+    outline: none;
+    background-color: #f9f9f9; /* Slight background change on focus */
+}
+
+/* Optional: Add a custom arrow (cross-browser compatible) */
+#table-number::-ms-expand {
+    display: none; /* Hides default dropdown arrow in Internet Explorer */
+}
+
+/* Custom dropdown arrow */
+#table-number {
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    background: url('path/to/your-custom-arrow.svg') no-repeat right center;
+    background-size: 20px;
+}
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.side-menu a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #000000;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-menu a:hover {
+    color: #FFA500;
+    font-weight: bolder;
+}
+
+.side-menu .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.open-menu {
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff;
+    background-color: #FFA500;
+    padding: 8px;
+    border-radius: 30px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.8);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}

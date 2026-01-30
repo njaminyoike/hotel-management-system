@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Side Menu -->
+    <span class="open-menu" onclick="openMenu()">&#9776;</span>
+    <div id="mySideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">&times;</a>
+        <a href="../pages/add-meal.html">Add Meal</a>
+        <a href="../pages/employee_signin.html">Log Out</a>
+    </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Meals</title>
+    <link rel="stylesheet" href="../styles/available.css">
+</head>
+<body>
+    <header>
+        <h1>AVAILABLE MEALS</h1>
+        <button class="add-meal-btn" onclick="window.location.href='../pages/add-meal.html'">Add Meal
+            <span class="plus-symbol">&plus;</span>
+        </button>
+    </header>
+
+    <main>
+        <div class="meal-list">
+            <% meals.forEach(meal => { %>
+                <div class="meal">
+                    <img src="<%= meal.image %>" alt="<%= meal.name %>">
+                    <h2><%= meal.name %></h2>
+                    <p><%= meal.description %></p>
+                    <p>Quantity: <%= meal.quantity %>
+                    Price: <%= meal.price %></p>
+                    <div class="meal-buttons">
+                        <button class="edit-btn" onclick="editMealInfo('<%= meal._id %>')">Edit Meal Info</button>
+                        <button class="delete-btn" onclick="deleteMeal('<%= meal._id %>')">Delete</button>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </main>
+    <script>
+        // Embed the meals data as a JSON object
+        const meals = <%- JSON.stringify(meals) %>;
+
+        // Function to open side menu
+        function openMenu() {
+            document.getElementById("mySideMenu").style.width = "200px";
+            document.getElementById("main").style.marginLeft = "200px";
+        }
+
+        // Function to close side menu
+        function closeMenu() {
+            document.getElementById("mySideMenu").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+
+        function deleteMeal(id) {
+            fetch(`/delete-meal/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload(); // Refresh the page after deletion
+                } else {
+                    console.error('Failed to delete the meal');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting meal:', error);
+            });
+        }
+
+        function editMealInfo(id) {
+            const meal = meals.find(m => m._id === id);
+            if (meal) {
+                localStorage.setItem('selectedMeal', JSON.stringify(meal));
+                window.location.href = '../pages/edit_meal_info.html'; // Redirect to the edit page
+            } else {
+                console.error('Meal not found');
+            }
+        }
+    </script>
+</body>
+</html>

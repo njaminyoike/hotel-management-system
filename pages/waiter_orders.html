@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Orders</title>
+    <link rel="stylesheet" href="../styles/waiter_orders.css">
+</head>
+<body>
+    <!-- Side Menu -->
+    <span class="open-menu" onclick="openMenu()">&#9776;</span>
+    <div id="mySideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">&times;</a>
+        <a href="../views/venueMenu.ejs">Menu</a>
+        <a href="../pages/localCart.html">Cart</a>
+        <a href="../pages/order_history.html">History</a>
+        <a href="../pages/employee_signin.html">Log Out</a>
+    </div>
+    <header>
+        <h1 class="orders-heading">Pending Orders</h1>
+    </header>
+
+    <main>
+        <div class="order-list" id="order-list">
+            <!-- Orders will be inserted here by JavaScript -->
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+        const orderList = document.getElementById('order-list');
+        const customerPhone = localStorage.getItem('workId');
+        const paymentPopup = document.getElementById('payment-popup');
+        const closeBtn = document.querySelector('.close-btn');
+        const paymentForm = document.getElementById('payment-form');
+        const mealDetails = document.getElementById('meal-details');
+
+        if (!customerPhone) {
+            orderList.innerHTML = '<p>No customer phone found in local storage.</p>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/items?customerPhone=${customerPhone}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch items');
+            }
+
+            const items = await response.json();
+
+            if (items.length === 0) {
+                orderList.innerHTML = '<p>No pending orders.</p>';
+                return;
+            }
+
+            const groupedItems = items.reduce((acc, item) => {
+                if (!acc[item.tableNumber]) {
+                    acc[item.tableNumber] = [];
+                }
+                acc[item.tableNumber].push(item);
+                return acc;
+            }, {});
+
+            for (const tableNumber in groupedItems) {
+                const tableDiv = document.createElement('div');
+                tableDiv.classList.add('table-group');
+                
+                let totalAmount = 0;
+                groupedItems[tableNumber].forEach(item => {
+                    totalAmount += item.price * item.quantity;
+                });
+
+                tableDiv.innerHTML = `<h2>Table ${tableNumber} - Total: USD ${totalAmount}</h2>`;
+
+                tableDiv.addEventListener('click', () => {
+                    localStorage.setItem('selectedTableTotal', totalAmount);
+                    localStorage.setItem('selectedTableNumber', tableNumber);
+                    // window.location.href = 'payment_details.html';
+                });
+
+                groupedItems[tableNumber].forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('order-item');
+                    const status = item.state === 'venue' ? 'Being Prepared' : 'Ready to Collect';
+                    itemDiv.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="order-item-details">
+                            <h2>${item.name}</h2>
+                            <p>${item.description}</p>
+                            <p>Pieces: ${item.quantity}</p>
+                            <p>Price: USD ${item.price}</p>
+                            <p>Status: ${status}</p>
+                        </div>
+                    `;
+                    tableDiv.appendChild(itemDiv);
+
+                    if (status === 'Ready to Collect') {
+                        const paymentButton = document.createElement('button');
+                        paymentButton.classList.add('proceed-payment');
+                        paymentButton.textContent = 'Proceed to Payment';
+                        paymentButton.addEventListener('click', () => {
+                            const mealInfo = `
+                                ${item.name}<br>
+                                
+                                
+                            `;
+                            mealDetails.innerHTML = mealInfo;
+                            paymentPopup.style.display = 'block'; // Show the pop-up
+                        });
+                        tableDiv.appendChild(paymentButton);
+                    }
+                });
+
+                orderList.appendChild(tableDiv);
+            }
+        } catch (error) {
+            console.error('Error fetching items:', error);
+            orderList.innerHTML = '<p>Failed to load orders. Please try again later.</p>';
+        }
+
+        // Close the pop-up when the close button is clicked
+        closeBtn.addEventListener('click', () => {
+            paymentPopup.style.display = 'none';
+        });
+
+        // Handle form submission
+        paymentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const customerName = document.getElementById('customer-name').value;
+                const paymentMethod = document.getElementById('payment-method').value;
+                const totalAmount = localStorage.getItem('selectedTableTotal');
+                const tableNumber = localStorage.getItem('selectedTableNumber');
+                
+                // Send payment details to the server
+                try {
+                    const response = await fetch('/api/order-history', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            customerName,
+                            paymentMethod,
+                            totalAmount,
+                            tableNumber,
+                            mealDetails: mealDetails.innerHTML
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to save order history');
+                    }
+
+                    alert('Payment confirmed. Thank you!');
+                    window.location.href = '../views/venueMenu.ejs'; // Redirect to another page or reload
+                } catch (error) {
+                    console.error('Error confirming payment:', error);
+                    alert(`Failed to confirm payment: ${error.message}. Please try again.`);
+                }
+            });
+    });
+
+    async function confirmPayment() {
+                const tableNumber = localStorage.getItem('selectedTableNumber');
+
+                if (!tableNumber) {
+                    alert('No table number found. Please try again.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/items/mark-as-paid/${tableNumber}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`Failed to update items: ${errorData.error}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Update response:', data);
+
+                    alert('Payment confirmed. Thank you!');
+                    window.location.href = '../views/venueMenu.ejs'; // Redirect to venue menu or another page
+                } catch (error) {
+                    console.error('Error confirming payment:', error);
+                    alert(`Failed to confirm payment: ${error.message}. Please try again.`);
+                }
+            }
+            // Function to open side menu
+        function openMenu() {
+                        document.getElementById("mySideMenu").style.width = "200px";
+                        document.body.style.marginLeft = "200px";
+                    }
+
+            // Function to close side menu
+            function closeMenu() {
+                document.getElementById("mySideMenu").style.width = "0";
+                document.body.style.marginLeft = "0";
+            }
+
+    </script>
+
+    <!-- Pop-up Window -->
+    <div id="payment-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2>Payment Details</h2>
+            <p id="meal-details"></p>
+            <form id="payment-form">
+                <label for="customer-name">Customer Name:</label>
+                <input type="text" id="customer-name" name="customerName" required>
+
+                <label for="payment-method">Payment Method:</label>
+                <select id="payment-method" name="paymentMethod" required>
+                    <option value="cash">Cash</option>
+                    <!-- option value="card">Card</option -->
+                </select>
+                <button class="confirm-button" onclick="confirmPayment()" type="submit">Confirm Payment</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
