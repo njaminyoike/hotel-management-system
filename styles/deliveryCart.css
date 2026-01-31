@@ -469,3 +469,101 @@ footer p {
     box-shadow: 0 0 15px rgba(255, 165, 0, 0.8);
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
+/* ================= MOBILE STYLES ================= */
+@media (max-width: 600px) {
+    body {
+        background: #ffdddd; /* fun pink background */
+        font-size: 16px;
+        padding: 5px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+
+    header .cart-heading {
+        font-size: 20px;
+        margin: 5px 0;
+        text-align: center;
+    }
+
+    header .header-icons {
+        margin-top: 5px;
+    }
+
+    .cart-list {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .cart-item img {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .cart-item-details {
+        width: 100%;
+    }
+
+    .cart-item-details h2 {
+        font-size: 18px;
+    }
+
+    .cart-item-details p {
+        font-size: 14px;
+    }
+
+    .cart-item-details button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    .cart-total {
+        margin-left: 0;
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+    }
+
+    #table-number {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .confirm-order #confirm-order-btn {
+        width: 100%;
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .open-menu {
+        font-size: 22px;
+        padding: 6px;
+    }
+
+    .side-menu a {
+        font-size: 18px;
+        padding: 12px 20px;
+    }
+
+    footer {
+        font-size: 12px;
+        padding: 5px;
+    }
+}
+
