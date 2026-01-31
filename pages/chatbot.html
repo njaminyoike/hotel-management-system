@@ -81,71 +81,75 @@
       color: white;
       cursor: pointer;
     }
-    /* ================= MOBILE STYLES ================= */
+   /* ================= MOBILE STYLES ================= */
 @media (max-width: 600px) {
     body {
-        background: #ffdddd; /* fun pink */
-        font-size: 16px; /* slightly bigger for readability */
-        padding: 10px;
+        background: #ffdddd; /* fun pink for mobile */
+        font-size: 16px;
+        padding: 5px;
+        height: 100%;
     }
 
-    /* Chat container */
-    .chat-container {
+    #chat-container {
         width: 100%; /* full width */
-        height: 100vh; /* full screen height */
+        height: 90vh; /* take most of the screen */
         padding: 10px;
         box-sizing: border-box;
     }
 
-    /* Chat messages */
-    .chat-message {
-        font-size: 14px;
+    #chat {
+        flex: 1;
         padding: 10px;
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+
+    .message {
+        font-size: 14px;
+        padding: 8px 12px;
         margin-bottom: 8px;
         border-radius: 12px;
-        max-width: 85%; /* keep messages from stretching full width */
+        max-width: 85%;
+        word-wrap: break-word;
     }
 
-    /* User messages */
-    .chat-message.user {
-        background-color: #2563eb;
+    .user-message {
+        background-color: #2563eb; /* bright blue */
         color: #fff;
-        margin-left: auto;
+        align-self: flex-end;
     }
 
-    /* Bot messages */
-    .chat-message.bot {
-        background-color: #e5e7eb;
+    .bot-message {
+        background-color: #e5e7eb; /* light gray */
         color: #111;
-        margin-right: auto;
+        align-self: flex-start;
     }
 
-    /* Input field */
-    .chat-input {
+    #input-container {
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    #userInput {
         width: 100%;
         padding: 12px;
         font-size: 14px;
+        margin-bottom: 5px;
         border-radius: 10px;
         border: 1px solid #ccc;
-        margin-top: 10px;
     }
 
-    /* Send button */
-    .chat-send-btn {
+    #sendBtn {
         width: 100%;
         padding: 12px;
-        margin-top: 5px;
-        background-color: #28a745;
-        color: #fff;
-        border: none;
         border-radius: 10px;
         font-size: 16px;
-        cursor: pointer;
+        background-color: #28a745;
     }
 
-    /* Adjust font sizes for readability */
-    h1, h2, h3 {
-        font-size: 1.2em;
+    h2 {
+        font-size: 1.5em;
+        text-align: center;
     }
 }
 
