@@ -14,32 +14,26 @@ const cors = require('cors');
 const Transaction = require('./models/transaction');
 const OrderHistory = require('./models/orderHistory');
 console.log('SmartPay API Key Loaded:', process.env.SMARTPAYPESA_API_KEY ? 'YES' : 'NO');
-console.log("MONGODB_URI =", process.env.MONGODB_URI);
 
-// M-Pesa Configuration Check
-console.log('=== M-PESA CONFIG CHECK ===');
-console.log('Consumer Key:', process.env.MPESA_CONSUMER_KEY ? 'LOADED ✓' : 'MISSING ✗');
-console.log('Consumer Secret:', process.env.MPESA_CONSUMER_SECRET ? 'LOADED ✓' : 'MISSING ✗');
-console.log('Shortcode:', process.env.MPESA_SHORTCODE || 'MISSING ✗');
-console.log('Passkey:', process.env.MPESA_PASSKEY ? 'LOADED ✓' : 'MISSING ✗');
-console.log('Callback URL:', process.env.MPESA_CALLBACK_URL || 'MISSING ✗');
-console.log('===========================');
 const app = express();
-const port = process.env.PORT || 3000;
-app.set('trust proxy', true);
+const port = 3000;
+
 app.use(cors());
 
 const PAYPAL_CLIENT_ID = 'AUXbJ1MpXAA28xCuZbw_n-BkB6aAksDIXAES6RN_SYjE5Pp1GNwdcbpRVy9EJP6tgd2KFV80ir7_B58z';
 const PAYPAL_CLIENT_SECRET = 'EPA7dro8F7FD04Er5aZGZ9y5JpnWHL_luzYmOToZtY9VNT0OMqGv_CIwRcU2skag7PDqDwQyHjI0KNOH';
 
 // MongoDB URI string
-const dbURI = process.env.MONGODB_URI;
+const dbURI = 'mongodb+srv://max:h9H9mi5Gbp1IsH2t@nodejsdb.oxlzabu.mongodb.net/?retryWrites=true&w=majority&appName=NodejsDB';
+
+console.log("MONGODB_URI from Render =", process.env.MONGODB_URI);
+
 // Connect to MongoDB
 mongoose.connect(dbURI, {})
     .then(() => {
         console.log('Connected to MongoDB');
         app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
+            console.log(`Server is running at http://localhost:${port}`);
         });
     })
     .catch((err) => {
