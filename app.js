@@ -14,6 +14,7 @@ const cors = require('cors');
 const Transaction = require('./models/transaction');
 const OrderHistory = require('./models/orderHistory');
 console.log('SmartPay API Key Loaded:', process.env.SMARTPAYPESA_API_KEY ? 'YES' : 'NO');
+console.log("MONGODB_URI =", process.env.MONGODB_URI);
 
 // M-Pesa Configuration Check
 console.log('=== M-PESA CONFIG CHECK ===');
