@@ -24,7 +24,7 @@ console.log('Passkey:', process.env.MPESA_PASSKEY ? 'LOADED ✓' : 'MISSING ✗'
 console.log('Callback URL:', process.env.MPESA_CALLBACK_URL || 'MISSING ✗');
 console.log('===========================');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.set('trust proxy', true);
 app.use(cors());
 
@@ -32,14 +32,13 @@ const PAYPAL_CLIENT_ID = 'AUXbJ1MpXAA28xCuZbw_n-BkB6aAksDIXAES6RN_SYjE5Pp1GNwdcb
 const PAYPAL_CLIENT_SECRET = 'EPA7dro8F7FD04Er5aZGZ9y5JpnWHL_luzYmOToZtY9VNT0OMqGv_CIwRcU2skag7PDqDwQyHjI0KNOH';
 
 // MongoDB URI string
-const dbURI = 'mongodb+srv://max:h9H9mi5Gbp1IsH2t@nodejsdb.oxlzabu.mongodb.net/?retryWrites=true&w=majority&appName=NodejsDB';
-
+const dbURI = process.env.MONGODB_URI;
 // Connect to MongoDB
 mongoose.connect(dbURI, {})
     .then(() => {
         console.log('Connected to MongoDB');
         app.listen(port, () => {
-            console.log(`Server is running at http://localhost:${port}`);
+            console.log(`Server is running on port ${port}`);
         });
     })
     .catch((err) => {

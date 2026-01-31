@@ -102,7 +102,7 @@ let lastSuggestedItem = null;
 
 const greetings = ["hi","hello","hey","good morning","good afternoon","good evening"];
 
-fetch("http://localhost:3000/api/menu")
+fetch("/api/menu")
   .then(res => res.json())
   .then(data => menuData = data);
 
