@@ -293,8 +293,11 @@ document.getElementById("saveBtn").onclick = () => {
     JSON.stringify(locationData)
   );
 
-  window.location.href =
-    "http://localhost:3000/pages/payment.html?id=3f508b18-9ccf-4eae-8ec9-8b2799e9b57e";
+  const orderId = new URLSearchParams(window.location.search).get("id");
+
+window.location.href =
+  `${window.location.origin}/pages/payment.html?id=${orderId}`;
+
 };
 
 /* ================= RESET ================= */
