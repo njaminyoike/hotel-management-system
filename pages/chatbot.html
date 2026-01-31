@@ -81,6 +81,74 @@
       color: white;
       cursor: pointer;
     }
+    /* ================= MOBILE STYLES ================= */
+@media (max-width: 600px) {
+    body {
+        background: #ffdddd; /* fun pink */
+        font-size: 16px; /* slightly bigger for readability */
+        padding: 10px;
+    }
+
+    /* Chat container */
+    .chat-container {
+        width: 100%; /* full width */
+        height: 100vh; /* full screen height */
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Chat messages */
+    .chat-message {
+        font-size: 14px;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        max-width: 85%; /* keep messages from stretching full width */
+    }
+
+    /* User messages */
+    .chat-message.user {
+        background-color: #2563eb;
+        color: #fff;
+        margin-left: auto;
+    }
+
+    /* Bot messages */
+    .chat-message.bot {
+        background-color: #e5e7eb;
+        color: #111;
+        margin-right: auto;
+    }
+
+    /* Input field */
+    .chat-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+    }
+
+    /* Send button */
+    .chat-send-btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* Adjust font sizes for readability */
+    h1, h2, h3 {
+        font-size: 1.2em;
+    }
+}
+
   </style>
 </head>
 <body>
